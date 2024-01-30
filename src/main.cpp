@@ -1,4 +1,5 @@
 #include "common.h"
+#include "shader.h"
 
 #include <spdlog/spdlog.h>
 #include <glad/glad.h> //glad를 glfw 보다 먼저 인쿨루드
@@ -44,10 +45,10 @@ int main(int argc, const char** argv) {
         glfwTerminate();
         return -1;
     }
-    //Opengl context 추가
+    //Opengl context 셋팅
     glfwMakeContextCurrent(window);
 
-    // glad를 활용한 OpenGL 함수 로딩(Opengl context 생성 이후 실행)
+    // glad를 활용한 OpenGL 함수 로딩(Opengl context 셋팅 이후 실행)
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
         SPDLOG_ERROR("failed to initialize glad");
         glfwTerminate();

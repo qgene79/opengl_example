@@ -5,6 +5,7 @@
 
 CLASS_PTR(Shader);
 class Shader {
+public:    
     static ShaderUPtr CreateFromFile(const std::string& filename, GLenum shaterType);
 
     ~Shader();
@@ -13,6 +14,6 @@ private:
     Shader() {}
     bool LoadFile(const std::string& filename, GLenum shaderType);
     uint32_t m_shader { 0 };
-}
+};
 
 #endif // __SHADER_H__
