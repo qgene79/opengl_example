@@ -1,3 +1,5 @@
+#include "common.h"
+
 #include <spdlog/spdlog.h>
 #include <glad/glad.h> //glad를 glfw 보다 먼저 인쿨루드
 #include <GLFW/glfw3.h>
