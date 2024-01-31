@@ -9,9 +9,11 @@ set(WINDOW_HEIGHT 480)
 
 project(${PROJECT_NAME})
 add_executable(${PROJECT_NAME} 
-    src/main.cpp src/
+    src/main.cpp 
     src/common.cpp src/common.h
     src/shader.cpp src/shader.h
+    src/program.cpp src/program.h
+    src/context.cpp src/context.h
     )
 
 include(Dependency.cmake)

@@ -1,5 +1,4 @@
-#include "common.h"
-#include "shader.h"
+#include "context.h"
 
 #include <spdlog/spdlog.h>
 #include <glad/glad.h> //glad를 glfw 보다 먼저 인쿨루드
@@ -59,10 +58,12 @@ int main(int argc, const char** argv) {
     //SPDLOG_INFO("OpenGL context version: {}", glVersion); //core.h static_assert failed: 'Formatting of non-void pointers is disallowed.'
     SPDLOG_INFO("OpenGL context version: {}", (const char*)glVersion);
 
-    auto vertexShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);
-    auto fragmentShader = Shader::CreateFromFile("./shader/simple.fs", GL_FRAGMENT_SHADER);
-    SPDLOG_INFO("vertex shader id : {}", vertexShader->Get());
-    SPDLOG_INFO("fregment shader id : {}", fragmentShader->Get());
+    auto context = Context::Create();
+    if (!context) {
+        SPDLOG_ERROR("failed to create context");
+        glfwTerminate();
+        return -1;
+    }
 
     OnFramebufferSizeChange(window, WINDOW_WIDTH, WINDOW_HEIGHT);
     //event callback 함수
@@ -73,13 +74,11 @@ int main(int argc, const char** argv) {
     SPDLOG_INFO("Start main loop");
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
-        //전체 Clear 할 색 지정
-        glClearColor(0.0f, 0.1f, 0.2f, 0.0f);
-        //전체 Clear 실행
-        glClear(GL_COLOR_BUFFER_BIT);
+        context->Render();
         glfwSwapBuffers(window);
     }
-
+    context.reset(); //or context = nullptr
+    
     glfwTerminate();
     return 0;
 }
