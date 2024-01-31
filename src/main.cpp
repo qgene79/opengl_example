@@ -59,6 +59,11 @@ int main(int argc, const char** argv) {
     //SPDLOG_INFO("OpenGL context version: {}", glVersion); //core.h static_assert failed: 'Formatting of non-void pointers is disallowed.'
     SPDLOG_INFO("OpenGL context version: {}", (const char*)glVersion);
 
+    auto vertexShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);
+    auto fragmentShader = Shader::CreateFromFile("./shader/simple.fs", GL_FRAGMENT_SHADER);
+    SPDLOG_INFO("vertex shader id : {}", vertexShader->Get());
+    SPDLOG_INFO("fregment shader id : {}", fragmentShader->Get());
+
     OnFramebufferSizeChange(window, WINDOW_WIDTH, WINDOW_HEIGHT);
     //event callback 함수
     glfwSetFramebufferSizeCallback(window, OnFramebufferSizeChange);

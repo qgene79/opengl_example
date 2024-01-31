@@ -1,4 +1,7 @@
 {
+    "cmake.debugConfig": {
+        "cwd": "${workspaceFolder}"
+    },
     "files.associations": {
         "algorithm": "cpp",
         "array": "cpp",
@@ -73,4 +76,5 @@
         "xtr1common": "cpp",
         "xutility": "cpp"
     }
+
 }
