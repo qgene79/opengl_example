@@ -11,17 +11,21 @@ void Context::Render() {
     glClear(GL_COLOR_BUFFER_BIT);
 
     glUseProgram(m_program->Get());
-    glDrawArrays(GL_TRIANGLES, 0, 3);  
+    glDrawArrays(GL_TRIANGLES, 0, 6);  
     //glDrawArrays(GL_LINE_STRIP, 0, 4);
 }
 
 bool Context::Init() {
 
     float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f,
-        0.0f, 0.5f, 0.0f,
-    //    -0.5f, -0.5f, 0.0f,
+	    // first triangle
+        0.5f, 0.5f, 0.0f, // top right
+        0.5f, -0.5f, 0.0f, // bottom right
+        -0.5f, 0.5f, 0.0f, // top left
+        // second triangle
+        0.5f, -0.5f, 0.0f, // bottom right
+        -0.5f, -0.5f, 0.0f, // bottom left
+        -0.5f, 0.5f, 0.0f // top left
     };
 
     //vertex array object(vao) 생성 (vertex 버퍼 전에 선언)
@@ -35,7 +39,7 @@ bool Context::Init() {
     //GL_STATIC_DRAW 딱 한번만 세팅되고 앞으로 계속 쓸 예정
     //GL_DYNAMIC_DRAW 앞으로 데이터가 자주 바뀔 예정
     //GL_STREAM_DRAW 딱 한번만 세팅되고 몇번 쓰다 버려질 예정
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 9, vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 18, vertices, GL_STATIC_DRAW);
     //glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12, vertices, GL_STATIC_DRAW);
 
     //vertex attribute setting
