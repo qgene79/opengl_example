@@ -10,7 +10,7 @@ ContextUPtr Context::Create() {
 void Context::Render() {
     glClear(GL_COLOR_BUFFER_BIT);
 
-    glUseProgram(m_program->Get());
+    m_program->Use();
     glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     //glDrawArrays(GL_LINE_STRIP, 0, 4);
 }
@@ -33,14 +33,7 @@ bool Context::Init() {
     glBindVertexArray(m_vertexArrayObject);
 
     //vertex buffer object(vbo) 생성
-    glGenBuffers(1, &m_vertexBuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuffer);//GL_ARRAY_BUFFER == vbo vertex의 속성값 색 위치 등
-    //data 복사
-    //GL_STATIC_DRAW 딱 한번만 세팅되고 앞으로 계속 쓸 예정
-    //GL_DYNAMIC_DRAW 앞으로 데이터가 자주 바뀔 예정
-    //GL_STREAM_DRAW 딱 한번만 세팅되고 몇번 쓰다 버려질 예정
-    glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12, vertices, GL_STATIC_DRAW);
-    //glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 12, vertices, GL_STATIC_DRAW);
+    m_vertexBuffer = Buffer::CreateWithData(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices, sizeof(float) * 12);
 
     //vertex attribute array setting
     glEnableVertexAttribArray(0);// 0번 어트리뷰트를 사용 할꺼고 (simple.vs 의 location = 0)
@@ -49,9 +42,7 @@ bool Context::Init() {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
     //index buffer
-    glGenBuffers(1, &m_indexBuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);//GL_ARRAY_BUFFER == vbo vertex의 속성값 색 위치 등
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32_t) * 6, indices, GL_STATIC_DRAW);
+    m_indexBuffer = Buffer::CreateWithData(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices, sizeof(uint32_t) * 6);
 
     ShaderPtr vertShader = Shader::CreateFromFile("./shader/simple.vs", GL_VERTEX_SHADER);
     ShaderPtr fragShader = Shader::CreateFromFile("./shader/simple.fs", GL_FRAGMENT_SHADER);
