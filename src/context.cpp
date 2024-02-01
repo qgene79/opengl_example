@@ -29,17 +29,16 @@ bool Context::Init() {
     };
 
     //vertex array object(vao) 생성 (vertex 버퍼 전에 선언)
-    glGenVertexArrays(1, &m_vertexArrayObject);
-    glBindVertexArray(m_vertexArrayObject);
+    m_vertexLayout = VertexLayout::Create();
 
     //vertex buffer object(vbo) 생성
     m_vertexBuffer = Buffer::CreateWithData(GL_ARRAY_BUFFER, GL_STATIC_DRAW, vertices, sizeof(float) * 12);
 
     //vertex attribute array setting
-    glEnableVertexAttribArray(0);// 0번 어트리뷰트를 사용 할꺼고 (simple.vs 의 location = 0)
     //floating pointer 값이 3개, GL_FALSE 노말라이즈 할필요 없음, sizeof(float) * 3 스트라이드: 다음 점에서의 어트르뷰트는 float * 3 개 
+    //0번 어트리뷰트를 사용 할꺼고 (simple.vs 의 location = 0)
     //결국 위 어레이 값을 0번째 부터 3개씩 float 값으로 쪼개 simple.vs 에 aPos vec3(vector 3 형태로)에 넣음
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
+    m_vertexLayout->SetAttrib(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, 0);
 
     //index buffer
     m_indexBuffer = Buffer::CreateWithData(GL_ELEMENT_ARRAY_BUFFER, GL_STATIC_DRAW, indices, sizeof(uint32_t) * 6);
