@@ -16,8 +16,8 @@ private:
     bool Init();
     ProgramUPtr m_program;
 
-    uint32_t m_vertexBuffer;
-    BufferUPtr m_vertexArrayObject;
+    uint32_t m_vertexArrayObject;
+    BufferUPtr m_vertexBuffer;
     BufferUPtr m_indexBuffer;
 };
 
