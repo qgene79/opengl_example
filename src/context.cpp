@@ -78,15 +78,35 @@ bool Context::Init() {
     glClearColor(0.0f, 0.1f, 0.2f, 0.0f);
 
     //cpu memory 할당
+        //minmap : 이미지 크기가 작아지면 나타나는 문제를 해결하는 방법 baselevel 무한등비 급수? 1/3 만큼의 메모리 필요
+            // auto image = Image::Create(512, 512);
+            // image->SetCheckImage(16, 16);
+        //minmap 
     auto image = Image::Load("./images/container.jpg");
     if (!image) {
         return false;
     }
+
     SPDLOG_INFO("image {}x{}, {} channels",
         image->GetWidth(), image->GetHeight(), image->GetChannelCount());
 
     //gpu memory 할당
     m_texture = Texture::CreateFromImage(image.get());
+
+    auto image2 = Image::Load("./images/awesomeface.png");
+    if (!image2) {
+        return false;
+    }
+    m_texture2 = Texture::CreateFromImage(image2.get());
     
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_texture->Get());
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, m_texture2->Get());
+
+    m_program->Use();
+    glUniform1i(glGetUniformLocation(m_program->Get(), "tex"), 0);
+    glUniform1i(glGetUniformLocation(m_program->Get(), "tex2"), 1);
+
     return true;
 }
