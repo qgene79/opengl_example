@@ -17,6 +17,16 @@ void Program::Use() const {
     glUseProgram(m_program);
 }
 
+void Program::SetUniform(const std::string& name, int value) const {
+    auto loc =  glGetUniformLocation(m_program, name.c_str());
+    glUni
+}
+
+void Program::SetUniform(const std::string& name, const glm::mat4& value) const {
+
+}
+
+
 bool Program::Link(const std::vector<ShaderPtr>& shaders) {
     m_program = glCreateProgram();
     for (auto& shader: shaders)
