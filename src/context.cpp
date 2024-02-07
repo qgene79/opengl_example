@@ -26,32 +26,14 @@ void Context::Render() {
     glEnable(GL_DEPTH_TEST);
 
     m_program->Use();
-    auto projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.01f, 30.0f); //0.01 ~ 30.0 의 공간//너무크게 넓히면 안좋아
+    auto projection = glm::perspective(glm::radians(45.0f), (float)m_width / (float)m_height, 0.01f, 30.0f); //0.01 ~ 30.0 의 공간//너무크게 넓히면 안좋아
 
 //camera
-    //auto view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
-    float angle = glfwGetTime() * glm::pi<float>() * 0.5f; //4초마다 
-    auto x = sinf(angle) * 10.0f;//거리 10
-    auto z = cosf(angle) * 10.0f;//거리 10
-    auto cameraPos = glm::vec3(x, 0.0f, z);
-    auto cameraTarget = glm::vec3(0.0f, 0.0f, 0.0f);
-    auto cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
-
-    auto view = glm::lookAt(cameraPos, cameraTarget, cameraUp);
-    // {lookAt 으로 위같이 수정 할 수 있다.
-    // auto cameraZ = glm::normalize(cameraPos - cameraTarget);
-    // auto cameraX = glm::normalize(glm::cross(cameraUp, cameraZ));
-    // auto cameraY = glm::cross(cameraZ, cameraX);
-
-    // auto cameraMat = glm::mat4(
-    //     glm::vec4(cameraX, 0.0f),
-    //     glm::vec4(cameraY, 0.0f),
-    //     glm::vec4(cameraZ, 0.0f),
-    //     glm::vec4(cameraPos, 1.0f)
-    //     );
-    // auto view = glm::inverse(cameraMat);
-    // }
-//camera
+    auto view = glm::lookAt(
+        m_cameraPos,
+        m_cameraPos + m_cameraFront,
+        m_cameraUp
+        );
 
     for (size_t i = 0; i < cubePositions.size(); i++) {
         auto& pos = cubePositions[i];
@@ -62,6 +44,32 @@ void Context::Render() {
         m_program->SetUniform("transform", transform);
         glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
     }
+}
+
+void Context::ProcessInput(GLFWwindow* window) {
+    const float cameraSpeed = 0.05f;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        m_cameraPos += cameraSpeed * m_cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        m_cameraPos -= cameraSpeed * m_cameraFront;
+
+    auto cameraRight = glm::normalize(glm::cross(m_cameraUp, -m_cameraFront));//x = cross(y, -z)
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        m_cameraPos += cameraSpeed * cameraRight;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        m_cameraPos -= cameraSpeed * cameraRight;
+
+    auto cameraUp = glm::normalize(glm::cross(m_cameraFront, cameraRight));//y = cross(z, x)
+    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        m_cameraPos += cameraSpeed * cameraUp;
+    if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        m_cameraPos -= cameraSpeed * cameraUp;
+}
+
+void Context::Reshape(int width, int height) {
+    m_width = width;
+    m_height = height;
+    glViewport(0, 0, m_width, m_height);
 }
 
 bool Context::Init() {
@@ -178,43 +186,6 @@ bool Context::Init() {
     m_program->Use();
     m_program->SetUniform("tex", 0);
     m_program->SetUniform("tex2", 1);
-
-    // // 위치 (1, 0, 0)의 점. 동차좌표계 사용
-    // glm::vec4 vec(1.0f, 0.0f, 0.0f, 1.0f);
-    // // 단위행렬 기준 (1, 1, 0)만큼 평행이동하는 행렬
-    // auto trans = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 0.0f));
-    // // 단위행렬 기준 z축으로 90도 만큼 회전하는 행렬
-    // auto rot = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    // // 단위행렬 기준 모든 축에 대해 3배율 확대하는 행렬
-    // auto scale = glm::scale(glm::mat4(1.0f), glm::vec3(3.0f));
-    // // 확대 -> 회전 -> 평행이동 순으로 점에 선형 변환 적용
-    // vec = trans * rot * scale * vec;
-    // SPDLOG_INFO("transformed vec: [{}, {}, {}]", vec.x, vec.y, vec.z);
-
-    // 단위 행렬
-    // auto transform = glm::mat4(1.0f);
-    // 단위행렬 기준 (1, 1, 0)만큼 평행이동하는 행렬
-    // auto transform = glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 0.0f));
-    // 단위행렬 기준 z축으로 90도 만큼 회전하는 행렬
-    // auto transform = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    // 단위행렬 기준 모든 축에 대해 3배율 확대하는 행렬
-    // auto transform = glm::scale(glm::mat4(1.0f), glm::vec3(3.0f));
-
-    // 0.5배 축소후 z축으로 90도 회전하는 행렬
-    // auto transform = glm::rotate(
-    //     glm::scale(glm::mat4(1.0f), glm::vec3(0.5f)),
-    //     glm::radians(90.0f),
-    //     glm::vec3(0.0f, 0.0f, 1.0f)
-    //     );
-
-    // x 축으로 -55도 회전
-    auto model = glm::rotate(glm::mat4(1.0f), glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-    // 카메라는 원점으로부터 z축 방향으로 -3만큼 떨어짐
-    auto view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
-    // 종회비 4:3 세로화각 45도의 원근 투영
-    auto projection = glm::perspective(glm::radians(45.0f), (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT, 0.01f, 10.0f); //0.01f near / 10.0f far
-    auto transform = projection * view * model;  
-    m_program->SetUniform("transform", transform);
 
     return true;
 }

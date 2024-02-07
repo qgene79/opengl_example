@@ -6,7 +6,8 @@
 
 void OnFramebufferSizeChange(GLFWwindow* window, int width, int height) {
     SPDLOG_INFO("framebuffer size changed: ({} x {})", width, height);
-    glViewport(0, 0, width, height);
+    auto context = reinterpret_cast<Context*>(glfwGetWindowUserPointer(window));
+    context->Reshape(width, height);
 }
 
 void OnKeyEvent(GLFWwindow* window, int key, int scancode, int action, int mods) {
@@ -64,7 +65,9 @@ int main(int argc, const char** argv) {
         glfwTerminate();
         return -1;
     }
-
+    //포인터를 window 에 입힘?
+    glfwSetWindowUserPointer(window, context.get());
+    //포인터를 window 에 입힘?
     OnFramebufferSizeChange(window, WINDOW_WIDTH, WINDOW_HEIGHT);
     //event callback 함수
     glfwSetFramebufferSizeCallback(window, OnFramebufferSizeChange);
@@ -74,6 +77,7 @@ int main(int argc, const char** argv) {
     SPDLOG_INFO("Start main loop");
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
+        context->ProcessInput(window);
         context->Render();
         glfwSwapBuffers(window);
     }
