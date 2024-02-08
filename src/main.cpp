@@ -3,6 +3,8 @@
 #include <spdlog/spdlog.h>
 #include <glad/glad.h> //glad를 glfw 보다 먼저 인쿨루드
 #include <GLFW/glfw3.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 
 void OnFramebufferSizeChange(GLFWwindow* window, int width, int height) {
     SPDLOG_INFO("framebuffer size changed: ({} x {})", width, height);
@@ -71,6 +73,19 @@ int main(int argc, const char** argv) {
     //SPDLOG_INFO("OpenGL context version: {}", glVersion); //core.h static_assert failed: 'Formatting of non-void pointers is disallowed.'
     SPDLOG_INFO("OpenGL context version: {}", (const char*)glVersion);
 
+    //imgui init
+    //build err 발생
+    // imgui.cpp.obj : error LNK2019: unresolved external symbol "void __cdecl ImGui::ShowFontAtlas(struct ImFontAtlas *)" 
+    // (?ShowFontAtlas@ImGui@@YAXPEAUImFontAtlas@@@Z) referenced in function "void __cdecl ImGui::ShowMetricsWindow(bool *)"
+    // (?ShowMetricsWindow@ImGui@@YAXPEA_N@Z)
+    // solve : imconfig -> #define IMGUI_DISABLE_METRICS_WINDOW  enable
+    auto imguiContext = ImGui::CreateContext();
+    ImGui::SetCurrentContext(imguiContext);
+    ImGui_ImplGlfw_InitForOpenGL(window, false);
+    ImGui_ImplOpenGL3_Init();
+    ImGui_ImplOpenGL3_CreateFontsTexture();
+    ImGui_ImplOpenGL3_CreateDeviceObjects();
+
     auto context = Context::Create();
     if (!context) {
         SPDLOG_ERROR("failed to create context");
@@ -91,12 +106,26 @@ int main(int argc, const char** argv) {
     SPDLOG_INFO("Start main loop");
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
         context->ProcessInput(window);
         context->Render();
+
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         glfwSwapBuffers(window);
     }
     context.reset(); //or context = nullptr
     
+    //imgui destory
+    ImGui_ImplOpenGL3_DestroyFontsTexture();
+    ImGui_ImplOpenGL3_DestroyDeviceObjects();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext(imguiContext);
+
     glfwTerminate();
     return 0;
 }
