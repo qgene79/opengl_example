@@ -41,6 +41,12 @@ private:
     glm::vec3 m_cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::vec3 m_cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
+    // light parameter
+    //1.0f, 1.0f, 1.0f 백색광
+    glm::vec3 m_ligthColor { glm::vec3(1.0f, 1.0f, 1.0f) }; 
+    glm::vec3 m_objectColor { glm::vec3(1.0f, 0.5f, 1.0f) };
+    float m_ambientStrength { 0.1f };
+
     int m_width { WINDOW_WIDTH };
     int m_height { WINDOW_HEIGHT };
 };
