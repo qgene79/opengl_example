@@ -45,14 +45,22 @@ private:
     glm::vec3 m_cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
     // light parameter
-    glm::vec3 m_lightPos { glm::vec3(3.0f, 3.0f, 3.0f) };
-    //1.0f, 1.0f, 1.0f 백색광
-    glm::vec3 m_ligthColor { glm::vec3(1.0f, 1.0f, 1.0f) }; 
-    glm::vec3 m_objectColor { glm::vec3(1.0f, 0.5f, 1.0f) };
-    float m_ambientStrength { 0.1f };
-    float m_specularStrength { 0.5f };
-    float m_specularShininess { 32.0f };
+    struct Light {
+        glm::vec3 position { glm::vec3(3.0f, 3.0f, 3.0f) };
+        glm::vec3 ambient { glm::vec3(0.1f, 0.1f, 0.1f) };
+        glm::vec3 diffuse { glm::vec3(0.5f, 0.5f, 0.5f) };
+        glm::vec3 specular { glm::vec3(1.0f, 1.0f, 1.0f) };
+    };
+    Light m_light;
 
+    // material parameter
+    struct Material {
+        glm::vec3 ambient { glm::vec3(1.0f, 0.5f, 0.3f) };
+        glm::vec3 diffuse { glm::vec3(1.0f, 0.5f, 0.3f) };
+        glm::vec3 specular { glm::vec3(0.5f, 0.5f, 0.5f) };
+        float shininess { 32.0f };
+    };
+    Material m_material;
 
     int m_width { WINDOW_WIDTH };
     int m_height { WINDOW_HEIGHT };
